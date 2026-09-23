@@ -2,6 +2,10 @@
 
 Plataforma integrada de abertura, encaminhamento e gestão de chamados de manutenção e suporte escolar (Informática, Elétrica e Zeladoria).
 
+<div align="center">
+  <img src="./README/" width="500">
+</div>
+
 ---
 
 ## 📌 Funcionalidades
