@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Técnico — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="solicitacao.html">Abrir Chamado</a></li>
+        <li><a href="painel.html" class="active">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Painel de Atendimento Técnico</h1>
+        <p class="page-subtitle">Gestão centralizada dos chamados de manutenção e suporte escolar</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button id="btnResetData" class="btn btn-secondary btn-sm" title="Restaurar dados de teste">
+          <i class="ph ph-arrow-counter-clockwise"></i> Resetar Exemplos
+        </button>
+        <a href="solicitacao.html" class="btn btn-primary">
+          <i class="ph ph-plus-circle"></i> Novo Chamado
+        </a>
+      </div>
+    </div>
+
+    <!-- Indicadores / Métricas -->
+    <div class="stats-strip">
+      <div class="stat-card stat-primary">
+        <div class="stat-label">Total Registado</div>
+        <div id="metricTotal" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Pendentes</div>
+        <div id="metricPendentes" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-info">
+        <div class="stat-label">Em Atendimento</div>
+        <div id="metricAndamento" class="stat-value">0</div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Concluídos</div>
+        <div id="metricConcluidos" class="stat-value">0</div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filter-bar mb-4">
+      <div class="form-group" style="flex: 2;">
+        <label class="form-label" for="filterSearch">Pesquisa Geral</label>
+        <input type="text" id="filterSearch" class="form-control" placeholder="Buscar por NIF, Solicitante, Sala...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filterTipo">Categoria</label>
+        <select id="filterTipo" class="form-control">
+          <option value="">Todas as Categorias</option>
+          <option value="INFORMATICA">Informática</option>
+          <option value="ELETRICA">Elétrica</option>
+          <option value="ZELADORIA">Zeladoria</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filterStatus">Status</label>
+        <select id="filterStatus" class="form-control">
+          <option value="">Todos os Status</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="EM_ANDAMENTO">Em Andamento</option>
+          <option value="CONCLUIDO">Concluído</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="card">
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Data</th>
+              <th>Solicitante</th>
+              <th>Local / Património</th>
+              <th>Categoria</th>
+              <th>Status</th>
+              <th>Técnico Responsável</th>
+              <th class="text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="ticketsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="emptyTableMessage" class="empty-state" style="display: none;">
+        <i class="ph ph-magnifying-glass empty-icon"></i>
+        <h4 class="empty-title">Nenhum chamado encontrado</h4>
+        <p class="empty-desc">Tente ajustar os termos ou filtros de pesquisa.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPanel();
+
+      document.getElementById('filterSearch').addEventListener('input', renderPanel);
+      document.getElementById('filterTipo').addEventListener('change', renderPanel);
+      document.getElementById('filterStatus').addEventListener('change', renderPanel);
+
+      document.getElementById('btnResetData').addEventListener('click', () => {
+        if (confirm('Deseja restaurar os chamados padrão de teste?')) {
+          localStorage.removeItem(STORAGE_KEY_TICKETS);
+          getTickets();
+          renderPanel();
+          showToast('Dados restaurados com sucesso!');
+        }
+      });
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderPanel() {
+      const tickets = getTickets();
+      const searchQuery = document.getElementById('filterSearch').value.toLowerCase().trim();
+      const tipoFilter = document.getElementById('filterTipo').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+
+      document.getElementById('metricTotal').textContent = tickets.length;
+      document.getElementById('metricPendentes').textContent = tickets.filter(t => t.status === 'PENDENTE').length;
+      document.getElementById('metricAndamento').textContent = tickets.filter(t => t.status === 'EM_ANDAMENTO').length;
+      document.getElementById('metricConcluidos').textContent = tickets.filter(t => t.status === 'CONCLUIDO').length;
+
+      const filtered = tickets.filter(t => {
+        const matchesSearch = !searchQuery ||
+          String(t.id).includes(searchQuery) ||
+          t.nif.toLowerCase().includes(searchQuery) ||
+          t.nomeSolicitante.toLowerCase().includes(searchQuery) ||
+          t.numeroSala.toLowerCase().includes(searchQuery) ||
+          t.codigoPatrimonio.toLowerCase().includes(searchQuery) ||
+          t.descricaoProblema.toLowerCase().includes(searchQuery);
+
+        const matchesTipo = !tipoFilter || t.tipoProblema === tipoFilter;
+        const matchesStatus = !statusFilter || t.status === statusFilter;
+
+        return matchesSearch && matchesTipo && matchesStatus;
+      });
+
+      const tbody = document.getElementById('ticketsTableBody');
+      const emptyEl = document.getElementById('emptyTableMessage');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.style.display = 'flex';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(t => {
+        return `
+          <tr>
+            <td class="table-id">#${t.id}</td>
+            <td class="text-muted" style="font-size: var(--text-xs);">${escapeHtml(t.dataCriacao) || '-'}</td>
+            <td>
+              <div class="fw-semibold">${escapeHtml(t.nomeSolicitante)}</div>
+              <div class="text-muted" style="font-size: var(--text-xs);">NIF: ${escapeHtml(t.nif)}</div>
+            </td>
+            <td>
+              <div>${escapeHtml(t.numeroSala)}</div>
+              <div class="text-muted" style="font-size: var(--text-xs);">${escapeHtml(t.codigoPatrimonio)}</div>
+            </td>
+            <td>${getTipoBadge(t.tipoProblema)}</td>
+            <td>${getStatusBadge(t.status)}</td>
+            <td style="font-size: var(--text-sm);">
+              ${t.tecnicoResponsavel && t.tecnicoResponsavel !== '-'
+                ? `<span class="fw-semibold"><i class="ph ph-user"></i> ${escapeHtml(t.tecnicoResponsavel)}</span>`
+                : '<span class="text-muted" style="font-style:italic;">Não atribuído</span>'}
+            </td>
+            <td class="text-right">
+              <div class="table-actions" style="justify-content: flex-end;">
+                ${t.status === 'PENDENTE' ? `
+                  <a href="painel-assumir.html?id=${t.id}" class="btn btn-primary btn-sm" title="Assumir Chamado">
+                    <i class="ph ph-hand-pointing"></i> Assumir
+                  </a>
+                ` : ''}
+
+                ${t.status === 'EM_ANDAMENTO' ? `
+                  <button onclick="quickConcluir(${t.id})" class="btn btn-success btn-sm" title="Marcar como Concluído">
+                    <i class="ph ph-check"></i> Concluir
+                  </button>
+                ` : ''}
+
+                <a href="painel-editar.html?id=${t.id}" class="btn btn-secondary btn-sm btn-icon" title="Editar">
+                  <i class="ph ph-pencil-simple"></i>
+                </a>
+
+                <a href="painel-excluir.html?id=${t.id}" class="btn btn-danger btn-sm btn-icon" title="Excluir">
+                  <i class="ph ph-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function quickConcluir(id) {
+      updateTicket(id, { status: 'CONCLUIDO' });
+      showToast(`Chamado #${id} concluído com sucesso!`, 'success');
+      renderPanel();
+    }
+  </script>
+</body>
+</html>

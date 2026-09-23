@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assumir Chamado — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="solicitacao.html">Abrir Chamado</a></li>
+        <li><a href="painel.html" class="active">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div style="max-width: 680px; margin-inline: auto;">
+      <a href="painel.html" class="btn btn-secondary btn-sm mb-4">
+        <i class="ph ph-arrow-left"></i> Voltar ao Painel
+      </a>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="badge badge-pending mb-1">Assumir Atendimento</span>
+            <h2 class="card-title">Chamado #<span id="ticketIdDisplay">---</span></h2>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Detalhes do Chamado -->
+          <div class="detail-grid mb-6">
+            <div class="detail-item">
+              <span class="detail-label">Solicitante</span>
+              <span class="detail-value" id="sumSolicitante">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Sala / Património</span>
+              <span class="detail-value" id="sumLocal">-</span>
+            </div>
+            <div class="detail-description">
+              <div class="detail-label mb-1">Descrição do Problema</div>
+              <div id="sumDescricao">-</div>
+            </div>
+          </div>
+
+          <form id="formAssumir" class="form-stack">
+            <div class="form-group">
+              <label class="form-label" for="tecnicoResponsavel">Técnico Responsável <span class="required">*</span></label>
+              <input type="text" id="tecnicoResponsavel" class="form-control" placeholder="Seu nome completo" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="observacoes">Observações Iniciais</label>
+              <textarea id="observacoes" class="form-control" rows="3" placeholder="Insira o diagnóstico inicial ou orientações..."></textarea>
+            </div>
+
+            <div class="d-flex justify-between align-center mt-4">
+              <a href="painel.html" class="btn btn-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary">
+                <i class="ph ph-check"></i> Confirmar & Iniciar Atendimento
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let currentTicketId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      currentTicketId = params.get('id');
+
+      if (!currentTicketId) {
+        window.location.href = 'painel.html';
+        return;
+      }
+
+      const ticket = getTicketById(currentTicketId);
+      if (!ticket) {
+        showToast('Chamado não encontrado!', 'danger');
+        setTimeout(() => window.location.href = 'painel.html', 1000);
+        return;
+      }
+
+      document.getElementById('ticketIdDisplay').textContent = ticket.id;
+      document.getElementById('sumSolicitante').textContent = `${ticket.nomeSolicitante} (NIF: ${ticket.nif})`;
+      document.getElementById('sumLocal').textContent = `${ticket.numeroSala} / ${ticket.codigoPatrimonio}`;
+      document.getElementById('sumDescricao').textContent = ticket.descricaoProblema;
+
+      const user = getCurrentUser();
+      if (user && user.nome) {
+        document.getElementById('tecnicoResponsavel').value = user.nome;
+      }
+
+      const form = document.getElementById('formAssumir');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tecnico = document.getElementById('tecnicoResponsavel').value.trim();
+        const obs = document.getElementById('observacoes').value.trim() || 'Atendimento iniciado pelo técnico.';
+
+        updateTicket(currentTicketId, {
+          tecnicoResponsavel: tecnico,
+          observacoes: obs,
+          status: 'EM_ANDAMENTO'
+        });
+
+        showToast(`Chamado #${currentTicketId} assumido com sucesso!`, 'success');
+        setTimeout(() => window.location.href = 'painel.html', 1000);
+      });
+    });
+  </script>
+</body>
+</html>

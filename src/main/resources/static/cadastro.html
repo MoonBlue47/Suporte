@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro Técnico — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <a href="index.html" class="auth-logo">
+        <i class="ph ph-wrench"></i>
+      </a>
+      <h2 class="auth-app-name">SENAI <span>Suporte</span></h2>
+      <p class="auth-subtitle">Criação de conta corporativa para técnicos</p>
+    </div>
+
+    <div class="auth-body">
+      <form id="formCadastro" class="form-stack">
+        <div class="form-group">
+          <label class="form-label" for="nome">Nome Completo</label>
+          <input type="text" id="nome" class="form-control" placeholder="João Pedro Santos" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail Corporativo</label>
+          <input type="email" id="email" class="form-control" placeholder="joao.pedro@sp.senai.br" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="senha">Senha de Acesso</label>
+          <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full mt-2">
+          <i class="ph ph-user-plus"></i> Finalizar Cadastro
+        </button>
+      </form>
+    </div>
+
+    <div class="auth-footer">
+      <div>Já possui registo? <a href="login.html" class="fw-semibold">Ir para o Login</a></div>
+      <div class="mt-2">
+        <a href="index.html" class="text-muted" style="font-size: var(--text-xs);"><i class="ph ph-arrow-left"></i> Voltar ao início</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('formCadastro');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim();
+
+        setCurrentUser({ email, nome });
+        showToast('Conta criada com sucesso!', 'success');
+        setTimeout(() => {
+          window.location.href = 'painel.html';
+        }, 800);
+      });
+    });
+  </script>
+</body>
+</html>

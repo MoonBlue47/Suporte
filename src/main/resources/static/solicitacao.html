@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abrir Chamado — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="solicitacao.html" class="active">Abrir Chamado</a></li>
+        <li><a href="painel.html">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header text-center" style="max-width: 680px; margin-inline: auto; flex-direction: column;">
+      <span class="badge badge-pending">
+        <i class="ph ph-plus-circle"></i> Novo Atendimento
+      </span>
+      <h1 class="page-title mt-2">Abrir Solicitação de Suporte</h1>
+      <p class="page-subtitle">Preencha os campos abaixo para notificar imediatamente a equipa técnica do SENAI.</p>
+    </div>
+
+    <div class="card" style="max-width: 720px; margin-inline: auto;">
+      <div class="card-body">
+        <form id="formSolicitacao" class="form-stack">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="nif">NIF / Matrícula <span class="required">*</span></label>
+              <input type="text" id="nif" class="form-control" placeholder="Ex: 1029384" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="nomeSolicitante">Nome Completo <span class="required">*</span></label>
+              <input type="text" id="nomeSolicitante" class="form-control" placeholder="Ex: Carlos Silva" required>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="numeroSala">Número da Sala / Local <span class="required">*</span></label>
+              <input type="text" id="numeroSala" class="form-control" placeholder="Ex: Lab A-102" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="codigoPatrimonio">Código do Património <span class="required">*</span></label>
+              <input type="text" id="codigoPatrimonio" class="form-control" placeholder="Ex: PAT-9921" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tipoProblema">Tipo de Ocorrência <span class="required">*</span></label>
+            <select id="tipoProblema" class="form-control" required>
+              <option value="">Selecione uma categoria...</option>
+              <option value="INFORMATICA">Informática (PC, Redes, Impressoras 3D, Projetores)</option>
+              <option value="ELETRICA">Elétrica (Bancadas, Tomadas, Quadros, Iluminação)</option>
+              <option value="ZELADORIA">Zeladoria (Ar-condicionado, Mobiliário, Hidráulica)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="descricaoProblema">Descrição Detalhada do Problema <span class="required">*</span></label>
+            <textarea id="descricaoProblema" class="form-control" rows="4" placeholder="Descreva com detalhe a anomalia e o impacto nas atividades..." required></textarea>
+          </div>
+
+          <div class="d-flex justify-between align-center mt-4">
+            <a href="index.html" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="ph ph-paper-plane-tilt"></i> Registar Chamado
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const tipoParam = params.get('tipo');
+      if (tipoParam) {
+        const select = document.getElementById('tipoProblema');
+        if (select) select.value = tipoParam;
+      }
+
+      const form = document.getElementById('formSolicitacao');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const ticketData = {
+          nif: document.getElementById('nif').value.trim(),
+          nomeSolicitante: document.getElementById('nomeSolicitante').value.trim(),
+          numeroSala: document.getElementById('numeroSala').value.trim(),
+          codigoPatrimonio: document.getElementById('codigoPatrimonio').value.trim(),
+          tipoProblema: document.getElementById('tipoProblema').value,
+          descricaoProblema: document.getElementById('descricaoProblema').value.trim()
+        };
+
+        const newTicket = addTicket(ticketData);
+        showToast(`Chamado #${newTicket.id} registado com sucesso!`, 'success');
+
+        setTimeout(() => {
+          window.location.href = 'painel.html';
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+</html>

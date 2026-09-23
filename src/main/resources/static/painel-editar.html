@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Chamado — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="solicitacao.html">Abrir Chamado</a></li>
+        <li><a href="painel.html" class="active">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div style="max-width: 720px; margin-inline: auto;">
+      <a href="painel.html" class="btn btn-secondary btn-sm mb-4">
+        <i class="ph ph-arrow-left"></i> Voltar ao Painel
+      </a>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Editar Chamado #<span id="ticketIdDisplay">---</span></h2>
+            <p class="text-muted" style="font-size: var(--text-sm);">Atualize as informações do chamado ou acompanhamento técnico</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form id="formEditar" class="form-stack">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="nif">NIF <span class="required">*</span></label>
+                <input type="text" id="nif" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="nomeSolicitante">Nome Solicitante <span class="required">*</span></label>
+                <input type="text" id="nomeSolicitante" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="numeroSala">Sala / Local <span class="required">*</span></label>
+                <input type="text" id="numeroSala" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="codigoPatrimonio">Código Património <span class="required">*</span></label>
+                <input type="text" id="codigoPatrimonio" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="tipoProblema">Categoria <span class="required">*</span></label>
+                <select id="tipoProblema" class="form-control">
+                  <option value="INFORMATICA">Informática</option>
+                  <option value="ELETRICA">Elétrica</option>
+                  <option value="ZELADORIA">Zeladoria</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="status">Status do Atendimento <span class="required">*</span></label>
+                <select id="status" class="form-control">
+                  <option value="PENDENTE">Pendente</option>
+                  <option value="EM_ANDAMENTO">Em Andamento</option>
+                  <option value="CONCLUIDO">Concluído</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="tecnicoResponsavel">Técnico Responsável</label>
+              <input type="text" id="tecnicoResponsavel" class="form-control" placeholder="Não atribuído">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="descricaoProblema">Descrição do Problema <span class="required">*</span></label>
+              <textarea id="descricaoProblema" class="form-control" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="observacoes">Observações Técnicas</label>
+              <textarea id="observacoes" class="form-control" rows="3" placeholder="Histórico de atendimento e observações de encerramento..."></textarea>
+            </div>
+
+            <div class="d-flex justify-between align-center mt-4">
+              <a href="painel.html" class="btn btn-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary">
+                <i class="ph ph-floppy-disk"></i> Salvar Alterações
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let currentTicketId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      currentTicketId = params.get('id');
+
+      if (!currentTicketId) {
+        window.location.href = 'painel.html';
+        return;
+      }
+
+      const ticket = getTicketById(currentTicketId);
+      if (!ticket) {
+        showToast('Chamado não encontrado!', 'danger');
+        setTimeout(() => window.location.href = 'painel.html', 1000);
+        return;
+      }
+
+      document.getElementById('ticketIdDisplay').textContent = ticket.id;
+      document.getElementById('nif').value = ticket.nif || '';
+      document.getElementById('nomeSolicitante').value = ticket.nomeSolicitante || '';
+      document.getElementById('numeroSala').value = ticket.numeroSala || '';
+      document.getElementById('codigoPatrimonio').value = ticket.codigoPatrimonio || '';
+      document.getElementById('tipoProblema').value = ticket.tipoProblema || 'INFORMATICA';
+      document.getElementById('status').value = ticket.status || 'PENDENTE';
+      document.getElementById('tecnicoResponsavel').value = ticket.tecnicoResponsavel !== '-' ? ticket.tecnicoResponsavel : '';
+      document.getElementById('descricaoProblema').value = ticket.descricaoProblema || '';
+      document.getElementById('observacoes').value = ticket.observacoes !== '-' ? ticket.observacoes : '';
+
+      const form = document.getElementById('formEditar');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        updateTicket(currentTicketId, {
+          nif: document.getElementById('nif').value.trim(),
+          nomeSolicitante: document.getElementById('nomeSolicitante').value.trim(),
+          numeroSala: document.getElementById('numeroSala').value.trim(),
+          codigoPatrimonio: document.getElementById('codigoPatrimonio').value.trim(),
+          tipoProblema: document.getElementById('tipoProblema').value,
+          status: document.getElementById('status').value,
+          tecnicoResponsavel: document.getElementById('tecnicoResponsavel').value.trim() || '-',
+          descricaoProblema: document.getElementById('descricaoProblema').value.trim(),
+          observacoes: document.getElementById('observacoes').value.trim() || '-'
+        });
+
+        showToast(`Chamado #${currentTicketId} atualizado com sucesso!`, 'success');
+        setTimeout(() => window.location.href = 'painel.html', 1000);
+      });
+    });
+  </script>
+</body>
+</html>

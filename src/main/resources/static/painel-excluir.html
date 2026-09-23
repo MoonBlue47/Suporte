@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Exclusão — SENAI Suporte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="solicitacao.html">Abrir Chamado</a></li>
+        <li><a href="painel.html" class="active">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div style="max-width: 580px; margin-inline: auto;">
+      <a href="painel.html" class="btn btn-secondary btn-sm mb-4">
+        <i class="ph ph-arrow-left"></i> Voltar ao Painel
+      </a>
+
+      <div class="danger-zone">
+        <div class="danger-icon">
+          <i class="ph ph-warning-circle"></i>
+        </div>
+        <h2 class="danger-title">Excluir Chamado #<span id="ticketIdDisplay">---</span></h2>
+        <p class="danger-desc">Esta ação é irreversível e removerá este registo definitivamente do sistema.</p>
+
+        <div class="card text-left p-4 mb-4" style="background: var(--white); text-align: left;">
+          <div class="d-flex justify-between align-center mb-2">
+            <span class="table-id" id="ticketIdSubDisplay"></span>
+            <span id="ticketStatusBadge"></span>
+          </div>
+          <div class="fw-semibold" id="solicitanteDisplay">-</div>
+          <div class="text-muted" style="font-size: var(--text-xs);" id="localDisplay">-</div>
+          <div class="mt-2 text-muted" style="font-size: var(--text-sm); font-style: italic;" id="descricaoDisplay">-</div>
+        </div>
+
+        <div class="d-flex justify-between align-center">
+          <a href="painel.html" class="btn btn-secondary">Cancelar</a>
+          <button id="btnConfirmDelete" class="btn btn-danger">
+            <i class="ph ph-trash"></i> Sim, Excluir Chamado
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let currentTicketId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      currentTicketId = params.get('id');
+
+      if (!currentTicketId) {
+        window.location.href = 'painel.html';
+        return;
+      }
+
+      const ticket = getTicketById(currentTicketId);
+      if (!ticket) {
+        showToast('Chamado não encontrado!', 'danger');
+        setTimeout(() => window.location.href = 'painel.html', 1000);
+        return;
+      }
+
+      document.getElementById('ticketIdDisplay').textContent = ticket.id;
+      document.getElementById('ticketIdSubDisplay').textContent = `#${ticket.id}`;
+      document.getElementById('ticketStatusBadge').innerHTML = getStatusBadge(ticket.status);
+      document.getElementById('solicitanteDisplay').textContent = `${ticket.nomeSolicitante} (NIF: ${ticket.nif})`;
+      document.getElementById('localDisplay').textContent = `Sala: ${ticket.numeroSala} | Património: ${ticket.codigoPatrimonio}`;
+      document.getElementById('descricaoDisplay').textContent = `"${ticket.descricaoProblema}"`;
+
+      document.getElementById('btnConfirmDelete').addEventListener('click', () => {
+        deleteTicket(currentTicketId);
+        showToast(`Chamado #${currentTicketId} removido com sucesso!`, 'danger');
+        setTimeout(() => window.location.href = 'painel.html', 800);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENAI Suporte — Sistema de Gestão de Chamados</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="page-wrapper">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">
+        <div class="navbar-logo">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div class="navbar-title">
+          SENAI <span>Suporte</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="index.html" class="active">Início</a></li>
+        <li><a href="solicitacao.html">Abrir Chamado</a></li>
+        <li><a href="painel.html">Painel Técnico</a></li>
+      </ul>
+
+      <div id="navUserSection" class="navbar-actions"></div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="ph ph-shield-check"></i> Plataforma de Manutenção & Suporte SENAI
+      </div>
+      <h1 class="hero-title">
+        Solução Ágil para Equipamentos e <span>Infraestrutura</span>
+      </h1>
+      <p class="hero-description">
+        Cadastre solicitações em poucos instantes e acompanhe a resolução em tempo real com transparência e prioridade técnica.
+      </p>
+
+      <div class="hero-actions">
+        <a href="solicitacao.html" class="btn btn-primary btn-lg">
+          <i class="ph ph-plus-circle"></i> Abrir Nova Solicitação
+        </a>
+        <a href="painel.html" class="btn btn-outline-light btn-lg">
+          <i class="ph ph-kanban"></i> Painel Técnico
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Quick Metrics Preview -->
+    <div class="stats-strip" id="indexStatsContainer">
+      <div class="stat-card stat-primary">
+        <div class="stat-label">Chamados Registrados</div>
+        <div class="stat-value" id="statTotalIndex">0</div>
+      </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Em Fila / Pendentes</div>
+        <div class="stat-value" id="statPendenteIndex">0</div>
+      </div>
+      <div class="stat-card stat-info">
+        <div class="stat-label">Em Atendimento</div>
+        <div class="stat-value" id="statAndamentoIndex">0</div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Resolvidos</div>
+        <div class="stat-value" id="statConcluidoIndex">0</div>
+      </div>
+    </div>
+
+    <!-- Categories Section -->
+    <section class="features-section">
+      <div class="text-center mb-6">
+        <h2 class="page-title">Tipos de Atendimento Disponíveis</h2>
+        <p class="page-subtitle">Suporte especializado para resolver os imprevistos da sua unidade escolar</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon blue">
+            <i class="ph ph-desktop"></i>
+          </div>
+          <h3 class="feature-title">Informática & T.I.</h3>
+          <p class="feature-desc">Computadores, impressoras 3D, rede local, projetores, softwares e bancadas de informática.</p>
+          <div class="mt-4">
+            <a href="solicitacao.html?tipo=INFORMATICA" class="fw-semibold">Solicitar T.I. &rarr;</a>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon red">
+            <i class="ph ph-lightning"></i>
+          </div>
+          <h3 class="feature-title">Manutenção Elétrica</h3>
+          <p class="feature-desc">Quadros de distribuição, iluminação de oficinas e salas, tomadas industriais e oscilações de energia.</p>
+          <div class="mt-4">
+            <a href="solicitacao.html?tipo=ELETRICA" class="fw-semibold">Solicitar Elétrica &rarr;</a>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon green">
+            <i class="ph ph-broom"></i>
+          </div>
+          <h3 class="feature-title">Zeladoria & Infra</h3>
+          <p class="feature-desc">Ar-condicionado, vazamentos, reparos em mobiliário, pintura e manutenção predial.</p>
+          <div class="mt-4">
+            <a href="solicitacao.html?tipo=ZELADORIA" class="fw-semibold">Solicitar Zeladoria &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="features-section">
+      <div class="text-center mb-6">
+        <h2 class="page-title">Como Funciona o Fluxo</h2>
+        <p class="page-subtitle">Processo integrado entre docentes, alunos e equipa técnica</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="badge badge-pending mb-2">Etapa 1</div>
+            <h4 class="feature-title">Registo do Chamado</h4>
+            <p class="feature-desc">Informe o NIF, património do equipamento e descreva a falha encontrada.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="badge badge-inprogress mb-2">Etapa 2</div>
+            <h4 class="feature-title">Atribuição Técnica</h4>
+            <p class="feature-desc">O técnico assume o chamado pelo painel e inicia o diagnóstico do equipamento.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="badge badge-done mb-2">Etapa 3</div>
+            <h4 class="feature-title">Resolução & Fechamento</h4>
+            <p class="feature-desc">Após o conserto ou substituição, o chamado é concluído com apontamentos do histórico.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SENAI <span>Suporte</span>. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tickets = getTickets();
+      document.getElementById('statTotalIndex').textContent = tickets.length;
+      document.getElementById('statPendenteIndex').textContent = tickets.filter(t => t.status === 'PENDENTE').length;
+      document.getElementById('statAndamentoIndex').textContent = tickets.filter(t => t.status === 'EM_ANDAMENTO').length;
+      document.getElementById('statConcluidoIndex').textContent = tickets.filter(t => t.status === 'CONCLUIDO').length;
+    });
+  </script>
+</body>
+</html>
