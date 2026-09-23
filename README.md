@@ -3,7 +3,7 @@
 Plataforma integrada de abertura, encaminhamento e gestão de chamados de manutenção e suporte escolar (Informática, Elétrica e Zeladoria).
 
 <div align="center">
-  <img src="./README/Tela_inicial.png" width="500">
+  <img src="./README/Tela_inicial.png" width="1000">
 </div>
 
 ---
